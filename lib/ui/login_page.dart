@@ -52,8 +52,13 @@ class _LoginUserState extends State<LoginUser> {
     _email = _controllerEmail.text;
     _password = _controllerPassword.text;
     await _authenticate(_email, _password, usuario);
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HomePage(usuario)));
+    if (usuario.isAdm) {
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeAdm(usuario)));
+    } else {
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage(usuario)));
+    }
   }
 
   @override

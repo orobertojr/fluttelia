@@ -42,38 +42,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
           )),
-      body: (widget.user.isAdm)
-          ? TextButton(
-              onPressed: () {
-                registerProduct(context);
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.account_circle,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Cadastrar produtos',
-                      style: TextStyle(color: Colors.white),
-                    )
-                  ],
-                ),
-              ),
-            )
-          : Container(),
+      //future list
     );
   }
 }
