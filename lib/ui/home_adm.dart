@@ -1,3 +1,4 @@
+import 'package:e_commerce/helpers/lisataPedidos.dart';
 import 'package:e_commerce/helpers/products_class.dart';
 import 'package:e_commerce/ui/add_product.dart';
 import 'package:e_commerce/ui/list_products.dart';
@@ -46,6 +47,50 @@ class _HomeAdmState extends State<HomeAdm> {
         'https://restful-ecommerce-ufma.herokuapp.com/api/v1/products',
         options: Options(headers: {"Authorization": _token}));
     print(response.data);
+  }
+
+  Future<void> _listPedidos() async {
+    List<Pedidos> listPedidos = [];
+    var _token = widget.user.token;
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.get(
+        'https://restful-ecommerce-ufma.herokuapp.com/api/v1/orders/all',
+        options: Options(headers: {"Authorization": "Bearer " + _token}));
+
+    if (response.data["success"] != true) {
+      throw Exception("erro na requisição");
+    }
+
+    List<dynamic> listaPed = List<dynamic>.from(response.data["data"]);
+    listPedidos.clear();
+    for (var i in listaPed) {
+      listPedidos.add(Pedidos.fromJson(i));
+    }
+    print(listPedidos[0].listaProd[0]);
+    print(listPedidos[0]);
+  }
+
+  Future<void> _listPedidosPendetes() async {
+    List<Pedidos> listPedidos = [];
+    var _token = widget.user.token;
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.get(
+        'https://restful-ecommerce-ufma.herokuapp.com/api/v1/orders/all',
+        options: Options(headers: {"Authorization": "Bearer " + _token}));
+
+    if (response.data["success"] != true) {
+      throw Exception("erro na requisição");
+    }
+
+    List<dynamic> listaPed = List<dynamic>.from(response.data["data"]);
+    listPedidos.clear();
+    for (var i in listaPed) {
+      listPedidos.add(Pedidos.fromJson(i));
+    }
+    print(listPedidos[0].listaProd[0]);
+    print(listPedidos[0]);
   }
 
   void registerProduct(BuildContext context) async {
