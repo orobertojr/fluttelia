@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:e_commerce/ui/home_adm.dart';
 import 'package:e_commerce/ui/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../helpers/user_class.dart';
+import 'package:http/http.dart' as http;
 
 class LoginUser extends StatefulWidget {
   @override
@@ -10,149 +13,227 @@ class LoginUser extends StatefulWidget {
 }
 
 class _LoginUserState extends State<LoginUser> {
-  var _email;
-  var _password;
-  var isUserSignedIn = false;
-  var alertaErr = false;
+  bool visible = false;
   User usuario = new User();
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
-  Future<void> _authenticate(String email, String password, User user) async {
-    Response response;
-    var dio = Dio();
-    final url = 'https://restful-ecommerce-ufma.herokuapp.com/login';
-    Map<String, dynamic> formData = {'email': email, 'password': password};
-    print(formData);
-    try {
-      response = await dio.post(url, data: formData);
+  void login(String email, String password, User user) async {
+    setState(() {
+      visible = true;
+    });
+    if (email.isEmpty || password.isEmpty) {
       setState(() {
-        user.firt_name = response.data["data"]["firsName"];
-        user.last_name = response.data["data"]["lastName"];
-        user.isAdm = response.data["data"]["isAdmin"];
-        user.email = response.data["data"]["email"];
-        user.token = response.data["data"]["token"];
+        visible = false;
       });
-      if (response.data["success"] == true) {
-        isUserSignedIn = true;
-        alertaErr = false;
-      } else {
-        alertaErr = true;
-      }
-    } on DioError catch (err) {
-      print(err.response);
-      if (err.response.statusCode == 400) {
-        alertaErr = true;
-      }
-    }
-  }
-
-  void onSignIn(BuildContext context) async {
-    _email = _controllerEmail.text;
-    _password = _controllerPassword.text;
-    await _authenticate(_email, _password, usuario);
-    if (usuario.isAdm) {
-      await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeAdm(usuario)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Por favor, preencha os campos email e senha!"),
+        backgroundColor: Colors.red,
+      ));
     } else {
-      await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePage(usuario)));
+      try {
+        http.Response response = await http.post(
+            Uri.parse('https://restful-ecommerce-ufma.herokuapp.com/login'),
+            body: {
+              'email': email,
+              'password': password,
+            },
+            headers: {
+              HttpHeaders.contentTypeHeader:
+                  "application/x-www-form-urlencoded",
+            });
+
+        Map<String, dynamic> resultMap =
+            Map<String, dynamic>.from(jsonDecode(response.body));
+
+        if (resultMap["success"] == true) {
+          setState(() {
+            visible = false;
+          });
+          user.firstName = resultMap["data"]["firstName"];
+          user.lastName = resultMap["data"]["lastName"];
+          user.isAdm = resultMap["data"]["isAdmin"];
+          user.email = resultMap["data"]["email"];
+          user.token = resultMap["data"]["token"];
+          if (user.isAdm) {
+            await Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomeAdm(user)));
+          } else {
+            await Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomePage(user)));
+          }
+        } else {
+          setState(() {
+            visible = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("As credenciais não conferem! Tente novamente."),
+            backgroundColor: Colors.red,
+          ));
+        }
+      } catch (e) {
+        print("Erro no acesso!");
+        print(e);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          color: Colors.red,
-          padding: EdgeInsets.all(50),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Material(
-                elevation: 10.0,
-                borderRadius: BorderRadius.circular(130.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(100.0)),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100.0),
-                        child: Image.asset(
-                          'images/carrinho.png',
-                          width: 130,
-                          height: 130.0,
-                        )),
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.blue,
+        body: SingleChildScrollView(
+            reverse: true,
+            child: Center(
+              child: Stack(
+                // mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    widthFactor: 0.6,
+                    heightFactor: 0.6,
+                    child: Material(
+                      borderRadius: BorderRadius.circular(200.0),
+                      color: Color.fromRGBO(255, 255, 255, 0.4),
+                      child: Container(
+                        height: 380,
+                        width: 380,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TextField(
-                      controller: _controllerEmail,
-                      autofocus: true,
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      decoration: InputDecoration(
-                          labelText: "Email",
-                          labelStyle: TextStyle(color: Colors.white)),
-                    ),
-                    TextField(
-                      controller: _controllerPassword,
-                      autofocus: true,
-                      obscureText: true,
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      decoration: InputDecoration(
-                          labelText: "Senha",
-                          labelStyle: TextStyle(color: Colors.white)),
-                    ),
-                    Divider(),
-                    Text((alertaErr) ? 'Email ou senha incorretos' : ' '),
-                    Divider(),
-                    TextButton(
-                      onPressed: () {
-                        onSignIn(context);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            isUserSignedIn ? Colors.green : Colors.blue),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.account_circle,
-                              color: Colors.white,
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 100.0),
+                      width: 300,
+                      height: 500,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Material(
+                            elevation: 10.0,
+                            borderRadius: BorderRadius.circular(150.0),
+                            child: Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(75.0)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  child: Image.asset('images/logoApp.png',
+                                      width: 95, height: 95),
+                                ),
+                              ),
                             ),
-                            SizedBox(width: 10),
-                            Text(
-                              isUserSignedIn ? 'Você está logado' : 'Entrar',
-                              style: TextStyle(color: Colors.white),
-                            )
-                          ],
-                        ),
+                          ),
+                          Text(
+                            'Fluttelia',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    key: ValueKey('senha'),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Por favor preencha a senha!';
+                                      }
+                                      return null;
+                                    },
+                                    controller: _controllerEmail,
+                                    autocorrect: true,
+                                    decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.cyan),
+                                            borderRadius:
+                                                BorderRadius.circular(30.0)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.cyan),
+                                            borderRadius:
+                                                BorderRadius.circular(30.0)),
+                                        prefixIcon: Icon(Icons.person,
+                                            color: Colors.blue),
+                                        hintText: "E-mail",
+                                        filled: true,
+                                        fillColor: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    width: 15.0,
+                                    height: 15.0,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Por favor preencha a senha!';
+                                      }
+                                      return null;
+                                    },
+                                    controller: _controllerPassword,
+                                    autocorrect: true,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.cyan),
+                                            borderRadius:
+                                                BorderRadius.circular(30.0)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.cyan),
+                                            borderRadius:
+                                                BorderRadius.circular(30.0)),
+                                        prefixIcon: Icon(Icons.lock,
+                                            color: Colors.blue),
+                                        hintText: "Senha",
+                                        filled: true,
+                                        fillColor: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    width: 15.0,
+                                    height: 15.0,
+                                  ),
+                                  OutlinedButton(
+                                      onPressed: () {
+                                        login(_controllerEmail.text,
+                                            _controllerPassword.text, usuario);
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                          primary: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0)),
+                                          padding: EdgeInsets.only(
+                                              right: 40.0, left: 40.0)),
+                                      child: Text(
+                                        "Entrar",
+                                        style: TextStyle(fontSize: 12.0),
+                                      ))
+                                ],
+                              ))
+                        ],
                       ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          )),
-    );
+                    ),
+                  ),
+                  Visibility(
+                      visible: visible,
+                      child: Container(
+                        alignment: Alignment.bottomCenter,
+                        margin: EdgeInsets.only(top: 500),
+                        child: SpinKitFadingCube(
+                          color: Colors.white,
+                          size: 15.0,
+                        ),
+                      )),
+                ],
+              ),
+            )));
   }
 }

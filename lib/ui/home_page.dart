@@ -1,5 +1,5 @@
 import 'package:e_commerce/helpers/products_class.dart';
-import 'package:e_commerce/ui/cadastrar_Product.dart';
+import 'package:e_commerce/ui/add_product.dart';
 import 'package:flutter/material.dart';
 import '../helpers/user_class.dart';
 import 'package:dio/dio.dart';
@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   void registerProduct(BuildContext context) async {
     await Navigator.push(context,
-        MaterialPageRoute(builder: (context) => RegisterProduct(widget.user)));
+        MaterialPageRoute(builder: (context) => AddProduct(widget.user)));
   }
 
   @override

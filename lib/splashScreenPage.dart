@@ -29,7 +29,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
       children: [
         SplashScreen(
             seconds: 4,
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.blue,
             navigateAfterSeconds: LoginUser()),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -42,7 +42,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),
                     image: DecorationImage(
-                        image: AssetImage('images/carrinho.png'),
+                        image: AssetImage('images/logoApp.png'),
                         fit: BoxFit.fill)),
               ),
             ),
