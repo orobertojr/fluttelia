@@ -16,6 +16,11 @@ class HomeAdm extends StatefulWidget {
 
 class _HomeAdmState extends State<HomeAdm> {
   var listProducts = new Product();
+  List<Pedidos> listPedidosTodos = [];
+  List<Pedidos> listPedidosPendentes = [];
+  List<Pedidos> listPedidosCancelados = [];
+  List<Pedidos> listPedidosCompletos = [];
+
   bool _showFab = true;
   bool _showNotch = true;
   FloatingActionButtonLocation _fabLocation =
@@ -50,7 +55,6 @@ class _HomeAdmState extends State<HomeAdm> {
   }
 
   Future<void> _listPedidos() async {
-    List<Pedidos> listPedidos = [];
     var _token = widget.user.token;
     Response response;
     Dio dio = new Dio();
@@ -63,21 +67,20 @@ class _HomeAdmState extends State<HomeAdm> {
     }
 
     List<dynamic> listaPed = List<dynamic>.from(response.data["data"]);
-    listPedidos.clear();
+    listPedidosTodos.clear();
     for (var i in listaPed) {
-      listPedidos.add(Pedidos.fromJson(i));
+      listPedidosTodos.add(Pedidos.fromJson(i));
     }
-    print(listPedidos[0].listaProd[0]);
-    print(listPedidos[0]);
+    print(listPedidosTodos[0].listaProd[0]);
+    print(listPedidosTodos[0].status);
   }
 
   Future<void> _listPedidosPendetes() async {
-    List<Pedidos> listPedidos = [];
     var _token = widget.user.token;
     Response response;
     Dio dio = new Dio();
     response = await dio.get(
-        'https://restful-ecommerce-ufma.herokuapp.com/api/v1/orders/all',
+        'https://restful-ecommerce-ufma.herokuapp.com/api/v1/orders/all/pending',
         options: Options(headers: {"Authorization": "Bearer " + _token}));
 
     if (response.data["success"] != true) {
@@ -85,12 +88,54 @@ class _HomeAdmState extends State<HomeAdm> {
     }
 
     List<dynamic> listaPed = List<dynamic>.from(response.data["data"]);
-    listPedidos.clear();
+    listPedidosPendentes.clear();
     for (var i in listaPed) {
-      listPedidos.add(Pedidos.fromJson(i));
+      listPedidosPendentes.add(Pedidos.fromJson(i));
     }
-    print(listPedidos[0].listaProd[0]);
-    print(listPedidos[0]);
+    print(listPedidosPendentes[0].listaProd[0]);
+    print(listPedidosPendentes[0].status);
+  }
+
+  Future<void> _listPedidosCancelados() async {
+    var _token = widget.user.token;
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.get(
+        'https://restful-ecommerce-ufma.herokuapp.com/api/v1/orders/all/cancelled',
+        options: Options(headers: {"Authorization": "Bearer " + _token}));
+
+    if (response.data["success"] != true) {
+      throw Exception("erro na requisição");
+    }
+
+    List<dynamic> listaPed = List<dynamic>.from(response.data["data"]);
+    listPedidosCancelados.clear();
+    for (var i in listaPed) {
+      listPedidosCancelados.add(Pedidos.fromJson(i));
+    }
+    print(listPedidosCancelados[0].listaProd[0]);
+    print(listPedidosCancelados[0].status);
+  }
+
+  Future<void> _listPedidosCompletos() async {
+    var _token = widget.user.token;
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.get(
+        'https://restful-ecommerce-ufma.herokuapp.com/api/v1/orders/all/cancelled',
+        options: Options(headers: {"Authorization": "Bearer " + _token}));
+
+    if (response.data["success"] != true) {
+      throw Exception("erro na requisição");
+    }
+
+    List<dynamic> listaPed = List<dynamic>.from(response.data["data"]);
+    listPedidosCompletos.clear();
+    for (var i in listaPed) {
+      listPedidosCompletos.add(Pedidos.fromJson(i));
+    }
+    print(listPedidosCompletos[0].listaProd[0]);
+    print(listPedidosCompletos[0].status);
   }
 
   void registerProduct(BuildContext context) async {
@@ -153,6 +198,7 @@ class _HomeAdmState extends State<HomeAdm> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            _listPedidosPendetes();
             registerProduct(context);
           },
           child: ImageIcon(
