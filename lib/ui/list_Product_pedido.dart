@@ -63,7 +63,7 @@ class _ListPedidoProductState extends State<ListPedidoProduct> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         image: filteredNames[index] != null
-                            ? NetworkImage(filteredNames[index]["imageUrl"])
+                            ? NetworkImage(filteredNames[index]["image"])
                             : FileImage(File("images/box.png")),
                         fit: BoxFit.cover),
                   ),
