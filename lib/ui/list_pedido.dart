@@ -1,6 +1,7 @@
 import 'package:e_commerce/helpers/pedidos.dart';
 import 'package:e_commerce/helpers/products_class.dart';
 import 'package:e_commerce/ui/home_page.dart';
+import 'package:e_commerce/ui/list_Product_pedido.dart';
 import 'package:e_commerce/ui/my_page.dart';
 import 'package:e_commerce/ui/show_description.dart';
 import 'package:flutter/material.dart';
@@ -166,12 +167,11 @@ class _ListPedidoState extends State<ListPedido> with TickerProviderStateMixin {
     return Future.value(false);
   }
 
-  void _showOptions(BuildContext context, int index) {
+  void _showOptions(BuildContext context, List<dynamic> produtos) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ShowDescription(response.data['data']['items'])));
+            builder: (context) => ListPedidoProduct(widget.user, produtos)));
   }
 
   Widget _productCardDone(BuildContext context, int index) {
@@ -222,7 +222,7 @@ class _ListPedidoState extends State<ListPedido> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
-        //_showOptions(context, index);
+        _showOptions(context, names2[index].listaProd);
       },
     );
   }

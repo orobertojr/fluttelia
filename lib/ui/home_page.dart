@@ -9,6 +9,7 @@ import 'package:e_commerce/ui/show_description.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
+import 'list_pedido.dart';
 import 'my_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -257,7 +258,12 @@ class _HomePageState extends State<HomePage> {
                   labelBackgroundColor: Colors.white,
                   backgroundColor: Colors.green,
                   labelStyle: TextStyle(color: Colors.black),
-                  onTap: () => print("Abrir tela de pedidos")),
+                  onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListPedido(widget.user)))
+                      }),
               SpeedDialChild(
                   child: Icon(
                     Icons.account_circle,

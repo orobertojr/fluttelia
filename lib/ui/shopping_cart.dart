@@ -242,7 +242,9 @@ class _Shopping_cart extends State<Shopping_cart> {
             heroTag: null,
             backgroundColor: Colors.green,
             icon: Icon(Icons.done),
-            onPressed: () {},
+            onPressed: () {
+              finalizarPedido();
+            },
             label: Text("Finalizar pedido"))
         //child: const Icon(
         // Icons.add_box,

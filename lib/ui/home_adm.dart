@@ -1,10 +1,5 @@
-import 'dart:io';
-import 'dart:convert' as convert;
-import 'package:http/http.dart' as http;
 import 'package:e_commerce/helpers/pedidos.dart';
 import 'package:e_commerce/helpers/products_class.dart';
-import 'package:e_commerce/helpers/toggleadm_helper.dart';
-import 'package:e_commerce/ui/add_product.dart';
 import 'package:e_commerce/ui/list_products.dart';
 import 'package:e_commerce/ui/my_page.dart';
 import 'package:flutter/material.dart';
