@@ -7,6 +7,8 @@ import 'package:e_commerce/ui/list_pedido.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
+import 'showDescriptionUser.dart';
+import 'showDescriptionUser.dart';
 
 class Shopping_cart extends StatefulWidget {
   User user;
@@ -99,6 +101,14 @@ class _Shopping_cart extends State<Shopping_cart> {
     } catch (err) {
       print(err);
     }
+  }
+
+  void _showOptions(BuildContext context, ProductUser prod) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ShowDescriptionUser(widget.user, prod.toJson())));
   }
 
   @override
@@ -228,6 +238,9 @@ class _Shopping_cart extends State<Shopping_cart> {
                                   ),
                                 ),
                               ),
+                              onTap: () {
+                                _showOptions(context, e);
+                              },
                             ))
                         .toList(),
                   );

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class ShowDescriptionUser extends StatefulWidget {
   User user;
   Map<String, dynamic> data;
+
   ShowDescriptionUser(this.user, this.data);
   @override
   _ShowDescriptionUserState createState() => _ShowDescriptionUserState();
@@ -54,6 +55,11 @@ class _ShowDescriptionUserState extends State<ShowDescriptionUser> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      if (widget.data["qty"] != null && widget.data["qty"] != 1) {
+        _n = widget.data["qty"];
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text("Detalhes de " + widget.data["title"]),

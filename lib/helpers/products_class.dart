@@ -37,4 +37,12 @@ class ProductUser {
         price = json['price'],
         image = json['image'],
         qty = json["qty"];
+  Map<String, dynamic> toJson() => {
+        'id': this.id,
+        'title': this.title,
+        'description': this.description,
+        'price': this.price,
+        'imageUrl': this.image,
+        'qty': this.qty
+      };
 }
