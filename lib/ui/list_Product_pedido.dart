@@ -1,13 +1,8 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/helpers/user_class.dart';
-import 'package:e_commerce/ui/shopping_cart.dart';
 import 'package:e_commerce/ui/showDescriptionUser.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
-import 'list_pedido.dart';
-import 'my_page.dart';
 
 class ListPedidoProduct extends StatefulWidget {
   User user;
@@ -20,7 +15,7 @@ class ListPedidoProduct extends StatefulWidget {
 class _ListPedidoProductState extends State<ListPedidoProduct> {
   List names = new List.empty(); // names we get from API
   List filteredNames = new List.empty(); // names filtered by search text
-  Widget _appBarTitle = new Text('Lista de Produtos');
+  Widget _appBarTitle = new Text('Lista de Produtos do Pedido ');
   void initState() {
     super.initState();
     this._buildList();

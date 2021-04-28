@@ -305,7 +305,7 @@ class _ListPedidoState extends State<ListPedido> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
-        //_showOptions(context, index);
+        _showOptions(context, names3[index].listaProd);
       },
     );
   }
@@ -358,7 +358,8 @@ class _ListPedidoState extends State<ListPedido> with TickerProviderStateMixin {
         ),
       ),
       onTap: () {
-        //_showOptions(context, index);
+        _showOptions(context, names4[index].listaProd);
+        ;
       },
     );
   }
